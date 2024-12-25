@@ -10,18 +10,13 @@ namespace Tyuiu.SinitsinDV.Sprint7.Project.V3.Lib
 
             try
             {
-                // Открываем файл для чтения с кодировкой UTF-8
                 using (var reader = new StreamReader(filePath, Encoding.UTF8))
                 {
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
-                        if (string.IsNullOrWhiteSpace(line)) continue;
-
                         var columns = line.Split(';');
-
-                        // Проверка на наличие второго столбца и преобразование в целое число
-                        if (columns.Length > 1 && int.TryParse(columns[1], out int grade))
+                        if (columns.Length > 1 && int.TryParse(columns[1], out int grade)) // Предполагается, что оценки во втором столбце
                         {
                             grades.Add(grade);
                         }
@@ -30,12 +25,12 @@ namespace Tyuiu.SinitsinDV.Sprint7.Project.V3.Lib
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}");
-                throw; // Генерируем исключение для обработки на уровне вызова
+                throw new Exception("Ошибка при чтении файла: " + ex.Message);
             }
 
             return grades;
         }
+
         public static double CalculateAverageGrade(List<int> grades)
         {
             if (grades == null || grades.Count == 0)

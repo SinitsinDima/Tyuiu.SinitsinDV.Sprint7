@@ -16,12 +16,12 @@ namespace Tyuiu.SinitsinDV.Sprint7.Project.V3
         private void SetupChart()
         {
             // Настройка Chart для графика
-            chartGrade_SDV.ChartAreas.Add(new ChartArea("MainArea"));
-            chartGrade_SDV.Legends.Add(new Legend("GradesLegend"));
+            chartGrade_SDV.ChartAreas.Add(new ChartArea("MainArea")); //Добавление области для графика
+            chartGrade_SDV.Legends.Add(new Legend("GradesLegend")); //Значение данных
             chartGrade_SDV.Series.Add(new Series("Оценки")
             {
-                ChartType = SeriesChartType.Column,
-                XValueType = ChartValueType.Int32
+                ChartType = SeriesChartType.Column, //Столбачатая диаграмма
+                XValueType = ChartValueType.Int32 // Тип данных по x (целые числа)
             });
         }
 
@@ -29,10 +29,10 @@ namespace Tyuiu.SinitsinDV.Sprint7.Project.V3
         {
             // Открываем диалог для выбора файла
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*";
+            openFileDialog.Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*"; //Расширение файла
             openFileDialog.Title = "Выберите файл для загрузки";
 
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            if (openFileDialog.ShowDialog() == DialogResult.OK) // Если пользователь выбрал файл, то можно нажать ок
             {
                 string filePath = openFileDialog.FileName;
 
@@ -80,7 +80,7 @@ namespace Tyuiu.SinitsinDV.Sprint7.Project.V3
                 Title = "Сохранить данные в файл"
             };
 
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            if (saveFileDialog.ShowDialog() == DialogResult.OK) // Если пользователь выбрал файл, то можно нажать ок
             {
                 string filePath = saveFileDialog.FileName;
 
@@ -95,9 +95,9 @@ namespace Tyuiu.SinitsinDV.Sprint7.Project.V3
                             // Пропускаем пустую строку для добавления новых данных
                             if (row.IsNewRow) continue;
 
-                            var cellValues = row.Cells.Cast<DataGridViewCell>()
-                                                      .Select(cell => cell.Value?.ToString() ?? string.Empty);
-                            writer.WriteLine(string.Join(";", cellValues));
+                            var cellValues = row.Cells.Cast<DataGridViewCell>() // Извлекаются значения ячеек строки
+                                                      .Select(cell => cell.Value?.ToString() ?? string.Empty); // Каждое значение ячейки преобразуется в строку
+                            writer.WriteLine(string.Join(";", cellValues)); // Все значения строки объединяются в одну строку через разделитель
                         }
                     }
 
@@ -147,7 +147,7 @@ namespace Tyuiu.SinitsinDV.Sprint7.Project.V3
 
             foreach (DataGridViewRow row in dataGridViewStudents_SDV.Rows)
             {
-                if (row.Cells.Count > 1 && int.TryParse(row.Cells[1].Value?.ToString(), out int grade))
+                if (row.Cells.Count > 1 && int.TryParse(row.Cells[1].Value?.ToString(), out int grade)) // существует ли второй столбец, Если значение ячейки можно преобразовать в целое число (оценка), то оно добавляется в список
                 {
                     grades.Add(grade);
                 }
@@ -219,13 +219,33 @@ namespace Tyuiu.SinitsinDV.Sprint7.Project.V3
                 MessageBox.Show("Введите значение для поиска.");
             }
         }
-        string filePath = @"C:\Файлы\Дневник.csv";
+        
         private void buttonDone_SDV_Click(object sender, EventArgs e)
         {
-            var grades = DataService.LoadGradesFromCsv(filePath);
-            double averageGrade = DataService.CalculateAverageGrade(grades);
-            textBoxResult_SDV.Text = averageGrade.ToString();
+            // Открываем диалог для выбора файла
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+                Title = "Выберите файл для расчета средней оценки"
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK) // Если пользователь выбрал файл
+            {
+                string filePath = openFileDialog.FileName; // Получаем путь к выбранному файлу
+
+                try
+                {
+                    var grades = DataService.LoadGradesFromCsv(filePath); // Загрузка оценок из выбранного файла
+                    double averageGrade = DataService.CalculateAverageGrade(grades); // Расчет средней оценки
+                    textBoxResult_SDV.Text = averageGrade.ToString(); // Выводим результат в текстовое поле
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка при загрузке данных: " + ex.Message); // Обработка ошибок
+                }
+            }
         }
+
 
         private void buttonAboutMe_SDV_Click(object sender, EventArgs e)
         {
@@ -243,6 +263,7 @@ namespace Tyuiu.SinitsinDV.Sprint7.Project.V3
         {
 
         }
+
+
     }
 }
-   
